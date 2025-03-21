@@ -1,0 +1,31 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres:13-alpine
+    container_name: shared-postgres
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  # Change this to a secure password
+      - POSTGRES_DB=postgres
+    volumes:
+      - /home/atisben/docker/postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - shared_network
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  postgres_data:
+    name: shared_postgres_data
+
+networks:
+  shared_network:
+    name: shared_network
+    driver: bridge

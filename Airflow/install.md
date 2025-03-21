@@ -1,1 +1,0 @@
-[Check this guide](https://www.justinwagg.com/docker-airflow-tutorial/)

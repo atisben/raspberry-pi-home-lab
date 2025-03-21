@@ -1,0 +1,47 @@
+version: '3'
+
+services:
+  airflow:
+    image: apache/airflow:2.7.3-python3.9
+    container_name: airflow
+    restart: always
+    environment:
+      - AIRFLOW__CORE__EXECUTOR=LocalExecutor
+      - AIRFLOW__DATABASE__SQL_ALCHEMY_CONN=postgresql+psycopg2://airflow:${AIRFLOW_PASSWORD}@shared-postgres:5432/airflow
+      - AIRFLOW__CORE__FERNET_KEY=${FERNET_KEY} # Change this to a secure key
+      - AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION=true
+      - AIRFLOW__CORE__LOAD_EXAMPLES=false
+      - AIRFLOW__API__AUTH_BACKENDS=airflow.api.auth.backend.basic_auth
+      - _AIRFLOW_DB_UPGRADE=true
+      - _AIRFLOW_WWW_USER_CREATE=true
+      - _AIRFLOW_WWW_USER_USERNAME=admin
+      - _AIRFLOW_WWW_USER_PASSWORD=${ADMIN_PASSWORD}  # Change this to a secure password
+    volumes:
+      - /home/atisben/docker/airflow_dags:/opt/airflow/dags
+      - /home/atisben/docker/airflow_logs:/opt/airflow/logs
+      - /home/atisben/docker/airflow_plugins:/opt/airflow/plugins
+    ports:
+      - "8080:8080"
+    user: "50000:0"  # This ensures all files are created with the correct permissions
+    command: >
+      bash -c "mkdir -p /opt/airflow/logs /opt/airflow/dags /opt/airflow/plugins &&
+              chown -R 50000:0 /opt/airflow/logs /opt/airflow/dags /opt/airflow/plugins &&
+              airflow db init &&
+              airflow users create --username admin --password ${ADMIN_PASSWORD} --firstname Admin --lastname User --role Admin --email admin@example.com &&
+              airflow webserver & airflow scheduler"
+    mem_limit: 2048m
+    networks:
+      - shared_network
+
+volumes:
+  airflow_dags:
+    name: airflow_dags
+  airflow_logs:
+    name: airflow_logs
+  airflow_plugins:
+    name: airflow_plugins
+
+networks:
+  shared_network:
+    external: true
+    name: shared_network
