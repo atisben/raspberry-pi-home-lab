@@ -1,0 +1,26 @@
+version: "3"
+
+# Define the services to run
+services:
+  glances:
+    # Name of the container
+    container_name: glances
+    # Docker image to use
+    image: nicolargo/glances:4.3.0.8-full
+    # Port mapping between host and container
+    ports:
+      - 7300:61208
+    
+    # Environment variables
+    environment:
+      - TZ=${TZ} # Timezone
+      - GLANCES_OPT=-w # Glances option to run a web server
+
+    # Use host' PID namespace
+    pid: host
+
+    # Container restart policy
+    restart: unless-stopped
+
+    volumes:
+      - ${DOCKER_VOLUME_PATH}/glances/docker.sock:/var/run/docker.sock:ro #Docker socket for monitoring

@@ -20,7 +20,7 @@ services:
       - N8N_BASIC_AUTH_PASSWORD=${ADMIN_PASSWORD}  # Change this to a secure password
       - N8N_SECURE_COOKIE=false
     volumes:
-      - /home/atisben/docker/n8n_data:/home/node/.n8n
+      - ${DOCKER_VOLUME_PATH}/n8n_data:/home/node/.n8n
     networks:
       - shared_network
 

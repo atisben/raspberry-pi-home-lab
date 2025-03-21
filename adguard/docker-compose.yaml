@@ -1,0 +1,15 @@
+name: adguardhome
+
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguard
+    restart: unless-stopped
+    ports:
+      - 5300:53/tcp # plain dns over tcp
+      - 5300:53/udp # plain dns over udp
+      - 800:80/tcp # http web interface
+      - 3000:3000/tcp # initial setup web interface
+    volumes:
+      - ${DOCKER_VOLUME_PATH}/adguard/config:/opt/adguardhome/conf # app configuration
+      - ${DOCKER_VOLUME_PATH}/adguard/work:/opt/adguardhome/work # app working directory

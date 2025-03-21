@@ -10,7 +10,7 @@ services:
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}  # Change this to a secure password
       - POSTGRES_DB=postgres
     volumes:
-      - /home/atisben/docker/postgres_data:/var/lib/postgresql/data
+      - ${DOCKER_VOLUME_PATH}/postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     networks:
